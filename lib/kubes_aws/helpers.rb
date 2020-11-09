@@ -7,5 +7,10 @@ module KubesAws
       fetcher = Secrets::Fetcher.new(options)
       fetcher.fetch(name)
     end
+
+    def aws_ssm(name, options={})
+      fetcher = SSM::Fetcher.new(options)
+      fetcher.fetch(name)
+    end
   end
 end
