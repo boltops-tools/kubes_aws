@@ -1,8 +1,6 @@
-require "aws-sdk-ssm"
-
 module KubesAws
   class SSM
-    include AwsServices
+    include Services
 
     def initialize(upcase: false, base64: false, prefix: nil, filters: [])
       @upcase, @base64, @filters = upcase, base64, filters

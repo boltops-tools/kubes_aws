@@ -1,8 +1,10 @@
 require "aws-sdk-eks"
 require "aws-sdk-iam"
+require "aws-sdk-secretsmanager"
+require "aws-sdk-ssm"
 
 module KubesAws
-  module AwsServices
+  module Services
     extend Memoist
 
     def eks
