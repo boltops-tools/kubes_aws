@@ -5,7 +5,7 @@ require "openssl"
 module KubesAws
   class OpenId
     extend Memoist
-    include AwsServices
+    include Services
     include Logging
 
     def initialize(cluster)

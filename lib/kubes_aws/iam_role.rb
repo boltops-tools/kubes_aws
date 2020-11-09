@@ -5,7 +5,7 @@ require "json"
 module KubesAws
   class IamRole
     extend Memoist
-    include AwsServices
+    include Services
     include Logging
     include Prebaked
 

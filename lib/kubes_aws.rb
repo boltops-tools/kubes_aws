@@ -18,3 +18,5 @@ module KubesAws
 
   extend self
 end
+
+Kubes::Plugin.register(KubesAws)
