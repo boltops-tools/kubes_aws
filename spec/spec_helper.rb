@@ -1,3 +1,4 @@
+require "kubes"
 require "bundler/setup"
 require "kubes_aws"
 
