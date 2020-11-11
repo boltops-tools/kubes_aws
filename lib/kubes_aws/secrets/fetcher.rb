@@ -5,13 +5,17 @@ class KubesAws::Secrets
 
     def initialize(options={})
       @options = options
-      @base64 = options[:base64].nil? ? true : options[:base64]
+      @base64 = options[:base64]
     end
 
     def fetch(secret_id)
       value = fetch_value(secret_id)
-      value = Base64.strict_encode64(value).strip if @base64
+      value = Base64.strict_encode64(value).strip if base64?
       value
+    end
+
+    def base64?
+      @base64.nil? ? KubesAws.config.base64_secrets : @base64
     end
 
     def fetch_value(secret_id)
