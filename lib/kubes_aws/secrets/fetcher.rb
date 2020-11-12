@@ -15,7 +15,7 @@ class KubesAws::Secrets
     end
 
     def base64?
-      @base64.nil? ? KubesAws.config.base64_secrets : @base64
+      @base64.nil? ? KubesAws.config.secrets.base64 : @base64
     end
 
     def fetch_value(secret_id)

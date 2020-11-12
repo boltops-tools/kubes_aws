@@ -4,7 +4,8 @@ module KubesAws
 
     def defaults
       c = ActiveSupport::OrderedOptions.new
-      c.base64_secrets = true
+      c.secrets = ActiveSupport::OrderedOptions.new
+      c.secrets.base64 = true
       c
     end
 
