@@ -11,13 +11,14 @@ module KubesAws
 
     # public method to keep: role_name
     attr_reader :role_name
-    def initialize(app:, cluster:, namespace:nil, managed_policies: [], inline_policies: [], role_name: nil, ksa: nil)
+    def initialize(app:, cluster:nil, namespace:nil, managed_policies: [], inline_policies: [], role_name: nil, ksa: nil)
       @app, @cluster, @managed_policies, @inline_policies = app, cluster, managed_policies, inline_policies
 
       # conventional names
       @ksa = ksa || @app                               # convention: app
       @namespace = namespace || "#{@app}-#{Kubes.env}" # convention: app-env
       @role_name = role_name || "#{@app}-#{Kubes.env}" # convention: app-env
+      @cluster ||= infer_cluster
     end
 
     def call
@@ -25,6 +26,24 @@ module KubesAws
       create_iam_role
       add_mananged_policies
       add_inline_policies
+    end
+
+    # Attempts to infer the EKS cluster name using kubectl
+    def infer_cluster
+      command = "kubectl config view --minify --output 'jsonpath={..contexts..context.cluster}'"
+      out = `#{command}`
+      success = $?.success?
+      name = out.split('/').last
+      if !success or name.blank?
+        logger.error <<~EOL.color(:red)
+          ERROR: unable to determine EKS cluster name. Please specify it in:
+
+              KubesAws::IamRole.new
+
+        EOL
+        exit 1
+      end
+      name
     end
 
     def add_inline_policies
