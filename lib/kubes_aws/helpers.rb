@@ -12,5 +12,9 @@ module KubesAws
       fetcher = SSM::Fetcher.new(options)
       fetcher.fetch(name)
     end
+
+    def aws_secret_data(name, options={})
+      generic_secret_data(:aws_secret, name, options)
+    end
   end
 end
