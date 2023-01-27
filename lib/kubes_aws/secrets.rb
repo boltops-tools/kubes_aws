@@ -13,7 +13,7 @@ module KubesAws
       items.each do |item|
         next unless item.name.include?(@prefix) if @prefix
 
-        secret_value = secrets.get_secret_value(secret_id: item.name)
+        secret_value = secretsmanager.get_secret_value(secret_id: item.name)
         value = secret_value.secret_string
         value = Base64.strict_encode64(value).strip if @base64
 
@@ -33,7 +33,7 @@ module KubesAws
           args[:next_token] = next_token if next_token
           args.merge!(filters: @filters)
 
-          resp = secrets.list_secrets(args)
+          resp = secretsmanager.list_secrets(args)
 
           items = resp.secret_list
           next_token = resp.next_token

@@ -17,10 +17,10 @@ module KubesAws
     end
     memoize :iam
 
-    def secrets
+    def secretsmanager
       Aws::SecretsManager::Client.new
     end
-    memoize :secrets
+    memoize :secretsmanager
 
     def ssm
       Aws::SSM::Client.new
