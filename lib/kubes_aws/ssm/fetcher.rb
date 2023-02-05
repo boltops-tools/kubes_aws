@@ -33,6 +33,7 @@ class KubesAws::SSM
         next_token = resp.next_token
         parameters += resp.parameters
       end
+      parameters.sort_by! { |p| p.name }
       parameters.map do |parameter|
         base64_value = Base64.strict_encode64(parameter.value).strip
         base64 = options[:base64] || false # new method so dont need to deprecate with base64: nil

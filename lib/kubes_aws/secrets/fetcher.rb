@@ -29,6 +29,7 @@ class KubesAws::Secrets
         secrets += resp.secret_list
       end
 
+      secrets.sort_by! { |s| s.name }
       secrets.map do |secret|
         value = get_secret_value(secret.name, options)
         base64_value = Base64.strict_encode64(value).strip
