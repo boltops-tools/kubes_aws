@@ -22,7 +22,7 @@ module KubesAws
     end
 
     def call
-      create_open_id_connect_provider
+      create_open_id_connect_provider if KubesAws.config.iam.enable_create_odic
       create_iam_role
       add_mananged_policies
       add_inline_policies
