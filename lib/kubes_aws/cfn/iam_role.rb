@@ -53,7 +53,7 @@ class KubesAws::Cfn
       #   }
       # }
       text = <<~YAML
-        IamRole:
+        IamRoleArn:
           Value:
             Fn::GetAtt:
               IamRole.Arn

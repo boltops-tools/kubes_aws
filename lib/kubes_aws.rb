@@ -35,6 +35,15 @@ module KubesAws
     Config.instance.config
   end
 
+  # KubesAws.managed_iam_role_arn
+  # Kubes manages with .kubes/aws/iam_role.rb
+  def managed_iam_role_arn
+    cfn = KubesAws::Cfn.new
+    stack = cfn.show
+    output = stack.outputs.find { |o| o.output_key == "IamRoleArn" }
+    output.output_value if output
+  end
+
   extend self
 end
 

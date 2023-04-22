@@ -50,8 +50,7 @@ module KubesAws
         logger.info "Stack #{@stack_name.color(:green)} does not exist."
         exit 1
       end
-
-      pp stack.to_h
+      stack
     end
 
     def delete
