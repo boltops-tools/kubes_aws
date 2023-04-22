@@ -39,16 +39,17 @@ module KubesAws
   # Kubes manages with .kubes/aws/iam_role.rb
   def managed_iam_role
     cfn = KubesAws::Cfn.new
-    unless cfn.exist?
-      logger.debug "WARN: KubesAws.managed_iam_role: stack does not exist."
-      logger.debug "Maybe you need to run kubes aws deploy?"
-      return
-    end
-    stack = cfn.show
-    output = stack.outputs.find { |o| o.output_key == "IamRoleArn" }
-    output.output_value if output
+    cfn.managed_iam_role
   end
   alias_method :managed_iam_role_arn, :managed_iam_role
+
+  # KubesAws.managed_security_group
+  # Kubes manages with .kubes/aws/security_group.rb
+  def managed_security_group
+    cfn = KubesAws::Cfn.new
+    cfn.managed_security_group
+  end
+  alias_method :managed_security_group_id, :managed_security_group
 
   extend self
 end

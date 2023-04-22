@@ -77,6 +77,28 @@ module KubesAws
       status.wait
     end
 
+    def managed_iam_role
+      unless exist?
+        logger.debug "WARN: KubesAws.managed_iam_role: stack does not exist."
+        logger.debug "Maybe you need to run kubes aws deploy?"
+        return
+      end
+      stack = show
+      output = stack.outputs.find { |o| o.output_key == "IamRoleArn" }
+      output.output_value if output
+    end
+
+    def managed_security_group
+      unless exist?
+        logger.debug "WARN: KubesAws.managed_security_group: stack does not exist."
+        logger.debug "Maybe you need to run kubes aws deploy?"
+        return
+      end
+      stack = show
+      output = stack.outputs.find { |o| o.output_key == "SecurityGroupId" }
+      output.output_value if output
+    end
+
     def url_info
       stack = cfn.describe_stacks(stack_name: @stack_name).stacks.first
       url = "https://console.aws.amazon.com/cloudformation/home?region=#{region}#/stacks"
