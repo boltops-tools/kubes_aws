@@ -1,0 +1,81 @@
+class KubesAws::Cfn
+  class IamRole < KubesAws::Dsl::Base
+    include KubesAws::Dsl::IamRole
+
+    def initialize(options={})
+      super
+      @role_path = lookup_kubes_file("iam_role.rb")
+      @iam_policy = {}
+    end
+
+    def build
+      load_variables
+      evaluate_file(@role_path) if File.exist?(@role_path) # registers definitions to registry
+      evaluate_definitions # build definitions from registry. can set: @iam_statements and @managed_policy_arns
+      @properties[:Policies] = [{
+        PolicyName: "CodeBuildAccess",
+        PolicyDocument: {
+          Version: "2012-10-17",
+          Statement: derived_iam_statements
+        }
+      }]
+
+      @properties[:ManagedPolicyArns] ||= @managed_policy_arns || default_managed_policy_arns
+
+      resource = {
+        IamRole: {
+          Type: "AWS::IAM::Role",
+          Properties: @properties
+        }
+      }
+      auto_camelize(resource)
+    end
+
+  private
+    Registry = KubesAws::Dsl::IamRole::Registry
+    def evaluate_definitions
+      @iam_statements = Registry.iam_statements if Registry.iam_statements
+      @managed_policy_arns = Registry.managed_policy_arns if Registry.managed_policy_arns
+    end
+
+    def default_properties
+      {
+        AssumeRolePolicyDocument: {
+          Statement: [{
+            Action: ["sts:AssumeRole"],
+            Effect: "Allow",
+            Principal: {
+              Service: ["codebuild.amazonaws.com"]
+            }
+          }],
+          Version: "2012-10-17"
+        },
+        Path: "/"
+      }
+    end
+
+    def derived_iam_statements
+      @iam_statements || default_iam_statements
+    end
+
+    def default_iam_statements
+      [{
+        Action: [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "ssm:DescribeDocumentParameters",
+          "ssm:DescribeParameters",
+          "ssm:GetParameter*",
+        ],
+        Effect: "Allow",
+        Resource: "*"
+      }]
+    end
+
+    def default_managed_policy_arns
+      # Useful when using with CodePipeline
+      ["arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"]
+    end
+  end
+end
