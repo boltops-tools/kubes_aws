@@ -2,8 +2,7 @@ module KubesAws
   class Cfn < Kubes::CLI::Base
     def deploy
       @template = Builder.new(@options).template
-      puts "@template:"
-      pp @template
+      puts YAML.dump(@template)
     end
 
     def delete
