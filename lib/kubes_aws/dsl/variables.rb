@@ -1,5 +1,7 @@
 module KubesAws::Dsl
   module Variables
+    include Kubes::Compiler::Shared::RuntimeHelpers
+
     def load_variables
       load_variables_file("base")
       load_variables_file(Kubes.env)
