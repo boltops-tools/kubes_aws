@@ -18,6 +18,14 @@ class KubesAws::Cfn
         @template["Outputs"].merge!(iam_role.output)
       end
 
+      security_group = SecurityGroup.new(@options)
+      security_group.build
+      if security_group.filled?
+        @template["Resources"].merge!(security_group.resource)
+        @template["Outputs"] ||= {}
+        @template["Outputs"].merge!(security_group.output)
+      end
+
       write
       @template
     end

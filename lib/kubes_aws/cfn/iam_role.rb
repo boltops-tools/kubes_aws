@@ -32,9 +32,8 @@ class KubesAws::Cfn
           Properties: @properties
         }
       }
-      auto_camelize(resource) # camelize keys
+      auto_camelize(@resource) # camelize keys
     end
-    attr_reader :resource # iam_role.resource method
 
     # Happens when the DSL runs but there was no .kubes/aws/iam_role.rb file
     def unfilled?
@@ -46,12 +45,6 @@ class KubesAws::Cfn
     end
 
     def output
-      # {
-      #   IamRoleName: {
-      #     Value: { "Fn::GetAtt": ["IamRole", "Arn"] },
-      #     Description: "IAM Role Arn"
-      #   }
-      # }
       text = <<~YAML
         IamRoleArn:
           Value:

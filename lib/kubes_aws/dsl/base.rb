@@ -4,6 +4,7 @@ module KubesAws::Dsl
     include Variables
 
     attr_reader :options, :project_name, :full_project_name, :type
+    attr_reader :resource # iam_role.resource, security_group.resource
     def initialize(options={})
       super
       @type = options[:type]
@@ -18,5 +19,10 @@ module KubesAws::Dsl
         data.deep_stringify_keys!
       end
     end
+
+    def aws
+      AwsData.new
+    end
+    memoize :aws
   end
 end

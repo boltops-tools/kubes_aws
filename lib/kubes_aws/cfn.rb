@@ -11,7 +11,7 @@ module KubesAws
 
     def deploy
       sure?("Will deploy #{@stack_name.color(:green)} stack to create or update resources defined in #{sure_message_path}")
-      @template = Builder.new(@options).template
+      @template = build
       begin
         create_or_update
         url_info
@@ -21,9 +21,9 @@ module KubesAws
       rescue Aws::CloudFormation::Errors::ValidationError => e
         if e.message.include?("No updates") # No updates are to be performed.
           logger.info "#{e.message}".color(:yellow)
-        elsif e.message.include?("At least one Resources member must be defined")
-          logger.info "ERROR: ValidationError #{e.message}".color(:red)
-          logger.info "Maybe the .kubes/aws files are empty or do not define any resources?"
+        # elsif e.message.include?("At least one Resources member must be defined")
+        #   logger.info "ERROR: ValidationError #{e.message}".color(:red)
+        #   logger.info "Maybe the .kubes/aws files are empty or do not define any resources?"
         else
           logger.info "ERROR ValidationError: #{e.message}".color(:red)
           exit 1
@@ -42,6 +42,10 @@ module KubesAws
         template_body: template_body,
         capabilities: ["CAPABILITY_IAM"]
       )
+    end
+
+    def build
+      Builder.new(@options).template
     end
 
     def show

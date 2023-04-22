@@ -49,10 +49,5 @@ module KubesAws::Dsl
       return definition if definition.include?('iam::aws:policy')
       "arn:aws:iam::aws:policy/#{definition}"
     end
-
-    def aws
-      AwsData.new
-    end
-    memoize :aws
   end
 end
