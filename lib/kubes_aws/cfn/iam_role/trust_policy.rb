@@ -5,7 +5,8 @@ class KubesAws::Cfn::IamRole
     extend Memoist
     include KubesAws::Services # for eks client
 
-    # These variables can be set to override the default behavior:
+    # These variables can be set to override the default conventinons:
+    # Original docs: https://kubes.guru/docs/helpers/aws/iam-role/
     #
     #   @cluster @namespace @ksa
     #
@@ -72,11 +73,6 @@ class KubesAws::Cfn::IamRole
       resp.cluster.identity.oidc.issuer
     end
     memoize :issuer_url
-
-    def aws
-      AwsData.new
-    end
-    memoize :aws
 
     # Attempts to infer the EKS cluster name using kubectl
     def infer_cluster

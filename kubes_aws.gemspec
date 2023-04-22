@@ -23,12 +23,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
+  spec.add_dependency "aws_data"
+  spec.add_dependency "aws-sdk-cloudformation"
   spec.add_dependency "aws-sdk-ecr"
   spec.add_dependency "aws-sdk-eks"
   spec.add_dependency "aws-sdk-iam"
   spec.add_dependency "aws-sdk-secretsmanager"
   spec.add_dependency "aws-sdk-ssm"
-  spec.add_dependency "aws_data"
+  spec.add_dependency "cfn-status"
   spec.add_dependency "memoist"
   spec.add_dependency "zeitwerk"
 
