@@ -11,7 +11,7 @@ class KubesAws::Cfn
 
     def build
       load_variables
-      evaluate_file(@role_path) if File.exist?(@role_path) # registers definitions to registry
+      evaluate_file(@role_path) if @role_path # registers definitions to registry
       evaluate_definitions # build definitions from registry. can set: @iam_statements and @managed_policy_arns
       @properties[:AssumeRolePolicyDocument] = trust_policy # set after evaluate_file so @cluster is set
       @properties[:Policies] = [{
@@ -23,6 +23,7 @@ class KubesAws::Cfn
       }]
 
       @properties[:ManagedPolicyArns] ||= @managed_policy_arns || default_managed_policy_arns
+      @properties.delete(:ManagedPolicyArns) if @properties[:ManagedPolicyArns].empty?
 
       resource = {
         IamRole: {
@@ -49,25 +50,14 @@ class KubesAws::Cfn
       @iam_statements || default_iam_statements
     end
 
+    # In case of future use, we can set the default properties here. Originally taken from cody dsl
     def default_iam_statements
       []
-      # [{
-      #   Action: [
-      #     "logs:CreateLogGroup",
-      #     "logs:CreateLogStream",
-      #     "logs:PutLogEvents",
-      #     "ssm:DescribeDocumentParameters",
-      #     "ssm:DescribeParameters",
-      #     "ssm:GetParameter*",
-      #   ],
-      #   Effect: "Allow",
-      #   Resource: "*"
-      # }]
     end
 
+    # In case of future use, we can set the default properties here. Originally taken from cody dsl
     def default_managed_policy_arns
-      # Useful when using with CodePipeline
-      ["arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"]
+      []
     end
   end
 end
