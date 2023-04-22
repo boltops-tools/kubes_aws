@@ -10,8 +10,13 @@ class KubesAws::Cfn
     end
 
     def template
-      iam_role_resource = IamRole.new(@options).build
-      @template["Resources"].merge!(iam_role_resource)
+      iam_role = IamRole.new(@options)
+      iam_role.build
+      if iam_role.filled?
+        @template["Resources"].merge!(iam_role.resource)
+        @template["Outputs"] ||= {}
+        @template["Outputs"].merge!(iam_role.output)
+      end
 
       write
       @template

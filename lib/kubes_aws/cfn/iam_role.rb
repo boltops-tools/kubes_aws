@@ -21,17 +21,44 @@ class KubesAws::Cfn
           Statement: derived_iam_statements
         }
       }]
+      @properties.delete(:Policies) if derived_iam_statements.empty?
 
       @properties[:ManagedPolicyArns] ||= @managed_policy_arns || default_managed_policy_arns
       @properties.delete(:ManagedPolicyArns) if @properties[:ManagedPolicyArns].empty?
 
-      resource = {
+      @resource = {
         IamRole: {
           Type: "AWS::IAM::Role",
           Properties: @properties
         }
       }
-      auto_camelize(resource)
+      auto_camelize(resource) # camelize keys
+    end
+    attr_reader :resource # iam_role.resource method
+
+    # Happens when the DSL runs but there was no .kubes/aws/iam_role.rb file
+    def unfilled?
+      @properties['Policies'].nil? && @properties['ManagedPolicyArns'].nil?
+    end
+
+    def filled?
+      !unfilled?
+    end
+
+    def output
+      # {
+      #   IamRoleName: {
+      #     Value: { "Fn::GetAtt": ["IamRole", "Arn"] },
+      #     Description: "IAM Role Arn"
+      #   }
+      # }
+      text = <<~YAML
+        IamRole:
+          Value:
+            Fn::GetAtt:
+              IamRole.Arn
+      YAML
+      YAML.load(text)
     end
 
   private

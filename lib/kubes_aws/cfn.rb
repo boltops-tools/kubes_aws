@@ -21,6 +21,9 @@ module KubesAws
       rescue Aws::CloudFormation::Errors::ValidationError => e
         if e.message.include?("No updates") # No updates are to be performed.
           logger.info "#{e.message}".color(:yellow)
+        elsif e.message.include?("At least one Resources member must be defined")
+          logger.info "ERROR: ValidationError #{e.message}".color(:red)
+          logger.info "Maybe the .kubes/aws files are empty or do not define any resources?"
         else
           logger.info "ERROR ValidationError: #{e.message}".color(:red)
           exit 1
@@ -41,25 +44,31 @@ module KubesAws
       )
     end
 
-    def directory_not_empty?
-      Dir.glob(".kubes/aws/*").any?
+    def show
+      stack = find_stack(@stack_name)
+      unless stack
+        logger.info "Stack #{@stack_name.color(:green)} does not exist."
+        exit 1
+      end
+
+      pp stack.to_h
     end
 
     def delete
       sure?("Will delete #{@stack_name.color(:green)} stack to delete resources defined in #{sure_message_path}")
       stack = find_stack(@stack_name)
       unless stack
-        puts "Stack #{@stack_name.color(:green)} does not exist."
+        logger.info "Stack #{@stack_name.color(:green)} does not exist."
         exit 1
       end
 
       if stack.stack_status =~ /_IN_PROGRESS$/
-        puts "Cannot delete stack #{@stack_name.color(:green)} in this state: #{stack.stack_status.color(:green)}"
+        logger.info "Cannot delete stack #{@stack_name.color(:green)} in this state: #{stack.stack_status.color(:green)}"
         return
       end
 
       cfn.delete_stack(stack_name: @stack_name)
-      puts "Deleting stack #{@stack_name.color(:green)}"
+      logger.info "Deleting stack #{@stack_name.color(:green)}"
 
       return unless @wait
       status.wait
