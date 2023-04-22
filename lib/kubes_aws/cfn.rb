@@ -12,7 +12,6 @@ module KubesAws
     def deploy
       sure?("Will deploy #{@stack_name.color(:green)} stack to create or update resources defined in #{sure_message_path}")
       @template = Builder.new(@options).template
-      # puts YAML.dump(@template)
       begin
         create_or_update
         url_info
