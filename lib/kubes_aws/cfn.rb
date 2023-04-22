@@ -33,7 +33,7 @@ module KubesAws
 
     def create_or_update
       template_body = YAML.dump(@template)
-      action = stack_exists?(@stack_name) ? :update_stack : :create_stack
+      action = exist? ? :update_stack : :create_stack
       human_action = action.to_s.split("_").map(&:capitalize).join(" ")
       # IE: Creating stack kubes-demo-dev
       logger.info "#{human_action} #{@stack_name}"
@@ -90,6 +90,11 @@ module KubesAws
       else
         ".kubes/aws"
       end
+    end
+
+    # Used in KubesAws.managed_iam_role_arn
+    def exist?
+      stack_exists?(@stack_name)
     end
   end
 end
