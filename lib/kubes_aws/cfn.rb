@@ -133,8 +133,9 @@ module KubesAws
       stack_exists?(@stack_name)
     end
 
+    # Typically happens when IAM permissions are not setup correctly
     def rollback_terminal?(stack)
-      %w[ROLLBACK_COMPLETE ROLLBACK_FAILED].include?(stack.stack_status)
+      %w[DELETE_FAILED ROLLBACK_COMPLETE ROLLBACK_FAILED].include?(stack.stack_status)
     end
   end
 end
