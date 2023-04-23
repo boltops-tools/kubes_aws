@@ -12,6 +12,16 @@ module KubesAws
     def deploy
       sure?("Will deploy #{@stack_name.color(:green)} stack to create or update resources defined in #{sure_message_path}")
       @template = build
+
+      stack = find_stack(@stack_name)
+      if stack && rollback_terminal?(stack)
+        logger.info "Existing stack in terminal state: #{stack.stack_status}. Deleting stack before continuing."
+        cfn.delete_stack(stack_name: @stack_name)
+        status.wait
+        status.reset
+        stack = nil # at this point stack has been deleted
+      end
+
       begin
         create_or_update
         url_info
@@ -121,6 +131,10 @@ module KubesAws
     # Used in KubesAws.managed_iam_role_arn
     def exist?
       stack_exists?(@stack_name)
+    end
+
+    def rollback_terminal?(stack)
+      %w[ROLLBACK_COMPLETE ROLLBACK_FAILED].include?(stack.stack_status)
     end
   end
 end
