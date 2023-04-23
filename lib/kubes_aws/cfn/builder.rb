@@ -35,7 +35,7 @@ class KubesAws::Cfn
       template_path = ".kubes/tmp/cfn-template.yml"
       FileUtils.mkdir_p(File.dirname(template_path))
       IO.write(template_path, YAML.dump(@template))
-      logger.info "Template built: #{pretty_path(template_path)}"
+      logger.debug "Template built: #{pretty_path(template_path)}"
     end
   end
 end

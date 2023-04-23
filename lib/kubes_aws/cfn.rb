@@ -20,7 +20,7 @@ module KubesAws
         exit 2 unless status.success?
       rescue Aws::CloudFormation::Errors::ValidationError => e
         if e.message.include?("No updates") # No updates are to be performed.
-          logger.info "#{e.message}".color(:yellow)
+          logger.info "#{e.message}"
         # elsif e.message.include?("At least one Resources member must be defined")
         #   logger.info "ERROR: ValidationError #{e.message}".color(:red)
         #   logger.info "Maybe the .kubes/aws files are empty or do not define any resources?"
@@ -36,7 +36,7 @@ module KubesAws
       action = exist? ? :update_stack : :create_stack
       human_action = action.to_s.split("_").map(&:capitalize).join(" ")
       # IE: Creating stack kubes-demo-dev
-      logger.info "#{human_action} #{@stack_name}"
+      logger.info "#{human_action} #{@stack_name} for resources in #{sure_message_path}"
       cfn.send(action,
         stack_name: @stack_name,
         template_body: template_body,
