@@ -24,7 +24,7 @@ class KubesAws::Cfn
     end
 
     def filled?
-      true
+      !@properties['SecurityGroupIngress'].nil?
     end
 
     def output

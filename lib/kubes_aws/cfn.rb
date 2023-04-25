@@ -55,6 +55,7 @@ module KubesAws
     end
 
     def build
+      logger.info "Building CloudFormation template for resources in #{sure_message_path}"
       Builder.new(@options).template
     end
 
