@@ -10,17 +10,19 @@ class KubesAws::Cfn::IamRole
     #
     #   @cluster @namespace @ksa
     #
-    # In the DSL, .kubes/aws/iam_role.rb can set instance variable directly:
-    #
-    #   @cluster = "dev"
-    #   @namespace = "demo-dev"
-    #   @ksa = "demo"
-    #
-    # Or can use the method setter methods:
+    # In the .kubes/aws/iam_role.rb DSL, you can use the method setter methods:
     #
     #   cluster "dev"
     #   namespace "demo-dev"
     #   ksa "demo"
+    #
+    # You can also set instance variable directly:
+    # Note: This instance variable setting is not recommended and may be removed.
+    # It is better to use the setter methods below.
+    #
+    #   @cluster = "dev"
+    #   @namespace = "demo-dev"
+    #   @ksa = "demo"
     #
     def cluster(value=nil)
       if value.nil? # reader method
