@@ -14,7 +14,9 @@ module KubesAws
     def initialize(app:, cluster:nil, namespace:nil, managed_policies: [], inline_policies: [], role_name: nil, ksa: nil)
       @app, @cluster, @managed_policies, @inline_policies = app, cluster, managed_policies, inline_policies
 
-      # conventional names
+      # Conventional names
+      # Note: the reader and writer DSL methods are defined in
+      # kubes_aws/cfn/iam_role/trust_policy.rb
       @ksa = ksa || @app                               # convention: app
       @namespace = namespace || "#{@app}-#{Kubes.env}" # convention: app-env
       @role_name = role_name || "#{@app}-#{Kubes.env}" # convention: app-env

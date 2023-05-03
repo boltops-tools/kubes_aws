@@ -28,6 +28,13 @@ class KubesAws::Cfn
 
       write
       @template
+
+    rescue Aws::Errors::MissingCredentialsError, Aws::EKS::Errors::AccessDeniedException
+      e = $!
+      logger.info "ERROR #{e.class}: #{e.message}".color(:red)
+      logger.info "Error accessing AWS API to create Kubes managed resources."
+      logger.info "You may need to run `aws configure` to setup your AWS credentials."
+      exit 1
     end
     alias_method :run, :template
 

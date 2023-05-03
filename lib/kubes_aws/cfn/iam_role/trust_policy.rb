@@ -46,8 +46,15 @@ class KubesAws::Cfn::IamRole
       end
     end
 
+    def issuer_host(value=nil)
+      if value.nil? # reader method
+        @issuer_host || issuer_url.sub('https://','')
+      else # setter method
+        @issuer_host = value
+      end
+    end
+
     def trust_policy
-      issuer_host = issuer_url.sub('https://','')
       provider_arn = "arn:aws:iam::#{aws.account}:oidc-provider/#{issuer_host}"
       <<~JSON
       {
@@ -73,8 +80,39 @@ class KubesAws::Cfn::IamRole
     def issuer_url
       resp = eks.describe_cluster(name: cluster)
       resp.cluster.identity.oidc.issuer
+    rescue Aws::EKS::Errors::ResourceNotFoundException => e
+      logger.info "ERROR #{e.class}: #{e.message}".color(:red)
+      logger.info <<~EOL
+        The cluster #{cluster} does not exist.
+        Please specify the cluster name. Example:
+
+        .kubes/aws/iam_role.rb
+
+            cluster "dev"
+
+        Kubes can also discover the cluster name with kubectl.
+        You have to configure ~/.kube/config with the proper context for this to work.
+        In that case, you would remove the cluster setting in the .kubes/aws/iam_role.rb file.
+
+        #{issuer_url_message}
+        EOL
+        exit 1
     end
     memoize :issuer_url
+
+    def issuer_url_message
+      <<~EOL
+      The EKS cluster name is used to generate the trust policy.
+      Specifically, the trust policy uses the OIDC issuer URL.
+      You can also bypass this conventional logic by setting the issuer_host.
+
+      .kubes/aws/iam_role.rb
+
+          issuer_host "oidc.eks.us-east-1.amazonaws.com/id/EXAMPLED539D4633E53DE1B716D3041E"
+
+      Docs: https://kubes.guru/docs/features/aws/iam-role/
+      EOL
+    end
 
     # Attempts to infer the EKS cluster name using kubectl
     def infer_cluster
@@ -83,11 +121,17 @@ class KubesAws::Cfn::IamRole
       success = $?.success?
       name = out.split('/').last
       if !success or name.blank?
-        logger.error <<~EOL.color(:red)
-          ERROR: unable to determine EKS cluster name. Please specify it in:
+        logger.error "ERROR: Kubes unable to discover the cluster name with kubectl.".color(:red)
+        logger.info <<~EOL
+          You have to configure ~/.kube/config with the proper context for discovery to work.
 
-              KubesAws::IamRole.new
+          Or you can set the cluster name in .kubes/aws/iam_role.rb file.
 
+          .kubes/aws/iam_role.rb
+
+              cluster "dev"
+
+          #{issuer_url_message}
         EOL
         exit 1
       end
