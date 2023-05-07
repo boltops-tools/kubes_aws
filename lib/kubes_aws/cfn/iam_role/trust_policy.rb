@@ -8,21 +8,21 @@ class KubesAws::Cfn::IamRole
     # These variables can be set to override the default conventinons:
     # Original docs: https://kubes.guru/docs/helpers/aws/iam-role/
     #
-    #   @cluster @namespace @ksa
+    #   @cluster @kubernetes_namespace @kubernetes_service_account
     #
     # In the .kubes/aws/iam_role.rb DSL, you can use the method setter methods:
     #
     #   cluster "dev"
-    #   namespace "demo-dev"
-    #   ksa "demo"
+    #   kubernetes_namespace "demo-dev"
+    #   kubernetes_service_account "demo"
     #
     # You can also set instance variable directly:
     # Note: This instance variable setting is not recommended and may be removed.
     # It is better to use the setter methods below.
     #
     #   @cluster = "dev"
-    #   @namespace = "demo-dev"
-    #   @ksa = "demo"
+    #   @kubernetes_namespace = "demo-dev"
+    #   @kubernetes_service_account = "demo"
     #
     def cluster(value=nil)
       if value.nil? # reader method
@@ -31,18 +31,18 @@ class KubesAws::Cfn::IamRole
         @cluster = value
       end
     end
-    def namespace(value=nil)
+    def kubernetes_namespace(value=nil)
       if value.nil? # reader method
-        @namespace || [Kubes.app, Kubes.env, Kubes.extra].compact.join('-')
+        @kubernetes_namespace || [Kubes.app, Kubes.env, Kubes.extra].compact.join('-')
       else # setter method
-        @namespace = value
+        @kubernetes_namespace = value
       end
     end
-    def ksa(value=nil)
+    def kubernetes_service_account(value=nil)
       if value.nil? # reader method
-        @ksa || Kubes.app
+        @kubernetes_service_account || Kubes.app
       else # setter method
-        @ksa = value
+        @kubernetes_service_account = value
       end
     end
 
@@ -68,7 +68,7 @@ class KubesAws::Cfn::IamRole
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
               "StringEquals": {
-                "#{issuer_host}:sub": "system:serviceaccount:#{namespace}:#{ksa}"
+                "#{issuer_host}:sub": "system:serviceaccount:#{kubernetes_namespace}:#{kubernetes_service_account}"
               }
             }
           }
