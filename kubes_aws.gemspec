@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aws_data"
   spec.add_dependency "aws-sdk-cloudformation"
   spec.add_dependency "aws-sdk-ecr"
+  spec.add_dependency "aws-sdk-efs"
   spec.add_dependency "aws-sdk-eks"
   spec.add_dependency "aws-sdk-iam"
   spec.add_dependency "aws-sdk-secretsmanager"

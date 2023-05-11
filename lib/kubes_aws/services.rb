@@ -1,5 +1,6 @@
 require "aws-sdk-cloudformation"
 require "aws-sdk-ecr"
+require "aws-sdk-efs"
 require "aws-sdk-eks"
 require "aws-sdk-iam"
 require "aws-sdk-secretsmanager"
@@ -19,6 +20,11 @@ module KubesAws
       Aws::ECR::Client.new
     end
     memoize :ecr
+
+    def efs
+      Aws::EFS::Client.new
+    end
+    memoize :efs
 
     def eks
       Aws::EKS::Client.new

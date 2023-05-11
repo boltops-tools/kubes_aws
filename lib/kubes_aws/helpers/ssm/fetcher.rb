@@ -1,6 +1,6 @@
 require 'ostruct'
 
-class KubesAws::SSM
+class KubesAws::Helpers::SSM
   class Fetcher
     include KubesAws::Logging
     include KubesAws::Services
