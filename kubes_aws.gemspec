@@ -35,5 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "memoist"
   spec.add_dependency "zeitwerk"
 
-  spec.add_development_dependency "kubes"
+  # spec.add_development_dependency "kubes"
 end
