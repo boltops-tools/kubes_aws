@@ -1,4 +1,4 @@
-class KubesAws::Helpers::Secrets
+module KubesAws::Helpers::Secrets
   class Fetcher
     include KubesAws::Logging
     include KubesAws::Services
